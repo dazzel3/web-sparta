@@ -62,13 +62,34 @@
             border-radius: 5px 0 0 5px;
             margin-right: -1px;
         }
+        .blue {
+            color: blue;
+        }
     </style>
+    <script>
+        $(document).ready(function () {
+            q1()
+        })
+        function q1() {
+            $.ajax({
+              type: "GET",
+              url: "http://spartacodingclub.shop/sparta_api/rate",
+              data: {},
+              success: function (response) {
+                  let rate = response['rate']
+                  let temp_html = `<span class="blue">${rate}</span>`
+                  $('#dollar').append(temp_html)
+              }
+          })
+        }
+    </script>
 </head>
 <body>
     <div id="wrap">
         <img class="img" src="https://image.idus.com/image/files/8bdf3c7b014d4ae6b649c044da7cff68_1080.jpg">
         <h3>양초를 팝니다.<span>가격: 3000원/개</span></h3>
         <p>이 양초는 사실 특별한 힘을 가지고 있어요. 양초를 켜고 소원을 빌면 뭐든지 이루어 진답니다.</p>
+        <p id="dollar">달러-원 환율: </p>
         <div class="input-group mb-3">
           <span class="input-group-text">주문자 이름</span>
           <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
