@@ -21,7 +21,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=East+Sea+Dokdo&display=swap" rel="stylesheet">
-    <title>01 homework</title>
+    <title>homework shopping mall</title>
     <style>
         * {
             font-family: 'East Sea Dokdo', cursive;
@@ -69,6 +69,7 @@
     <script>
         $(document).ready(function () {
             q1()
+            order_listing()
         })
         function q1() {
             $.ajax({
@@ -82,6 +83,52 @@
               }
           })
         }
+        function order_listing() {
+            // 주문목록 보기 API 연결
+            $.ajax({
+                type: "GET",
+                url: "/order",
+                data: {},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        let orders = response['orders']
+                        for (let i = 0; i < orders.length; i++) {
+                            let name = orders[i]['name']
+                            let count = orders[i]['count']
+                            let address = orders[i]['address']
+                            let phone = orders[i]['phone']
+
+                            let temp_html = `<tr>
+                                                <th scope="row">${name}</th>
+                                                <td>${count}</td>
+                                                <td>${address}</td>
+                                                <td>${phone}</td>
+                                             </tr>`
+                            $('#orders-box').append(temp_html)
+                        }
+                    }
+                }
+            })
+        }
+        function order() {
+            // 주문하기 API 연결
+            let name = $('#name-input').val()
+            let count = $('#count-input').val()
+            let address = $('#address-input').val()
+            let phone = $('#phone-input').val()
+
+            $.ajax({
+                type: "POST",
+                url: "/order",
+                data: {name_give: name, count_give: count, address_give: address, phone_give: phone},
+                success: function (response) { // 성공하면
+                    if (response['result'] == 'success') {
+                        alert(response["msg"]);
+                        window.location.reload();
+                    }
+                }
+            })
+        }
     </script>
 </head>
 <body>
@@ -92,11 +139,11 @@
         <p id="dollar">달러-원 환율: </p>
         <div class="input-group mb-3">
           <span class="input-group-text">주문자 이름</span>
-          <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+          <input id="name-input" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
         </div>
         <div class="input-group mb-3">
           <span class="input-group-text">수량</span>
-          <select class="custom-select" id="inputGroupSelect01">
+          <select id="count-input" class="custom-select" id="inputGroupSelect01">
             <option selected>-- 수량을 선택하세요 --</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -105,13 +152,27 @@
         </div>
         <div class="input-group mb-3">
           <span class="input-group-text">주소</span>
-          <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+          <input id="address-input" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
         </div>
         <div class="input-group mb-3">
           <span class="input-group-text">전화번호</span>
-          <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+          <input id="phone-input" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
         </div>
-        <button type="button" class="btn btn-primary">주문하기</button>
+        <button type="button" class="btn btn-primary" onclick="order()">주문하기</button>
+        <div class="mt-5">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">이름</th>
+                    <th scope="col">수량</th>
+                    <th scope="col">주소</th>
+                    <th scope="col">전화번호</th>
+                </tr>
+                </thead>
+                <tbody id="orders-box">
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
 </html>
